@@ -1,52 +1,55 @@
 """
 Music Player, Telegram Voice Chat Bot
-Copyright (c) 2021-present Asm Safone <https://github.com/AsmSafone>
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>
+Based on the upstream MusicPlayer project.
+License: GNU Affero General Public License v3.0.
+Keep the upstream LICENSE and required notices with this project.
 """
 
 import os
 from dotenv import load_dotenv
 
-
 load_dotenv()
+
+
+def _bool_env(name: str, default: bool = False) -> bool:
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
 
 
 class Config:
     def __init__(self) -> None:
-        self.API_ID: str = os.environ.get("API_ID", None)
-        self.API_HASH: str = os.environ.get("API_HASH", None)
-        self.SESSION: str = os.environ.get("SESSION", None)
-        self.BOT_TOKEN: str = os.environ.get("BOT_TOKEN", None)
-        self.SUDOERS: list = [
-            int(id) for id in os.environ.get("SUDOERS", " ").split() if id.isnumeric()
+        self.API_ID = os.environ.get("API_ID")
+        self.API_HASH = os.environ.get("API_HASH")
+        self.SESSION = os.environ.get("SESSION")
+        self.BOT_TOKEN = os.environ.get("BOT_TOKEN")
+
+        self.SUDOERS = [
+            int(user_id)
+            for user_id in os.environ.get("SUDOERS", "").split()
+            if user_id.lstrip("-").isdigit()
         ]
+
         if not self.SESSION or not self.API_ID or not self.API_HASH:
-            print("ERROR: SESSION, API_ID and API_HASH is required!")
-            quit(0)
-        self.SPOTIFY: bool = False
-        self.QUALITY: str = os.environ.get("QUALITY", "high").lower()
-        self.PREFIXES: list = os.environ.get("PREFIX", "!").split()
-        self.LANGUAGE: str = os.environ.get("LANGUAGE", "en").lower()
-        self.STREAM_MODE: str = (
+            raise RuntimeError("SESSION, API_ID and API_HASH are required")
+
+        self.SPOTIFY = bool(
+            os.environ.get("SPOTIFY_CLIENT_ID")
+            and os.environ.get("SPOTIFY_CLIENT_SECRET")
+        )
+        self.QUALITY = os.environ.get("QUALITY", "high").lower()
+        self.PREFIXES = os.environ.get("PREFIX", "!").split()
+        self.LANGUAGE = os.environ.get("LANGUAGE", "en").lower()
+        self.STREAM_MODE = (
             "audio"
-            if (os.environ.get("STREAM_MODE", "audio").lower() == "audio")
+            if os.environ.get("STREAM_MODE", "audio").lower() == "audio"
             else "video"
         )
-        self.ADMINS_ONLY: bool = os.environ.get("ADMINS_ONLY", False)
-        self.SPOTIFY_CLIENT_ID: str = os.environ.get("SPOTIFY_CLIENT_ID", None)
-        self.SPOTIFY_CLIENT_SECRET: str = os.environ.get("SPOTIFY_CLIENT_SECRET", None)
+        self.ADMINS_ONLY = _bool_env("ADMINS_ONLY", False)
+        self.SPOTIFY_CLIENT_ID = os.environ.get("SPOTIFY_CLIENT_ID")
+        self.SPOTIFY_CLIENT_SECRET = os.environ.get("SPOTIFY_CLIENT_SECRET")
 
 
 config = Config()

@@ -601,5 +601,12 @@ async def closed_vc(_, update: Update):
         clear_queue(chat_id)
 
 
-client.start()
+if config.BOT_TOKEN:
+    bot.start()
+    print("✅ BOT CLIENT STARTED")
+
+print("✅ STARTING USER CLIENT...")
+app.start()
+
+print("✅ STARTING PYTGCALLS...")
 pytgcalls.run()

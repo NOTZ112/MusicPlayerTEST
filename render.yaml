@@ -1,0 +1,32 @@
+services:
+  - type: worker
+    name: your-music-player
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    envVars:
+      - key: API_ID
+        sync: false
+      - key: API_HASH
+        sync: false
+      - key: SESSION
+        sync: false
+      - key: BOT_TOKEN
+        sync: false
+      - key: SUDOERS
+        sync: false
+      - key: PREFIX
+        value: "!"
+      - key: LANGUAGE
+        value: "en"
+      - key: QUALITY
+        value: "high"
+      - key: STREAM_MODE
+        value: "audio"
+      - key: ADMINS_ONLY
+        value: "False"
+      - key: SPOTIFY_CLIENT_ID
+        sync: false
+      - key: SPOTIFY_CLIENT_SECRET
+        sync: false
